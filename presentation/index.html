@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<!--
+Copyright 2011 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Author: Drew Tayman (atayman@potomacfusion.com)
+-->
+
+<html>
+<head>
+  <title>Getting a kick out of Javascript: The Dojo Framework</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|Droid+Sans+Mono&v2">
+  <link rel="icon" type="image/png" href="images/chrome-logo-tiny2.png">
+</head>
+
+<body style="display: none">
+
+<section class='slides layout-regular'>
+
+  <article class="title-slide">
+    <div>
+      <div data-config-logo class="spin"></div>
+      <p style="color:#545454;">Getting a kick out of Javascript:</p>
+      <h1>The Dojo Framework</h1>
+      <p class="info">
+        <span data-config-name></span><br>
+        <time datetime="YYYY-MM-DD" data-config-date>MM DD, 2011</time> &nbsp; - &nbsp; <span data-config-location></span>
+      </p>
+    </div>
+  </article>
+  
+  <article id="who">
+    <h3>Who?</h3>
+    <p>
+      <img class=" rounded" data-config-pic>
+    </p>
+    <br>
+    <p>
+      <a rel="author" data-config-gplus target="_blank" style="margin-left:-8px;">
+        <img src="images/facebook-icon.png" width="58" height="58">
+      </a><a rel="author" data-config-gplus target="_blank" s><span data-config-name></span></a>
+    </p>
+    <p>
+      <a rel="author" data-config-yahooId target="_blank" style="margin-left:-8px;">
+        <img src="images/yahoo-icon.png" width="58" height="58">
+      </a> <a rel="author" data-config-yahooId target="_blank" style="margin-left:-8px;"><span data-config-yahooId></span></a>
+    </p>
+
+    <p>
+      <a rel="author" data-config-email target="_blank" style="margin-left:-8px;">
+        <img src="images/email-icon.png" width="58" height="58">
+      </a> <a rel="author" data-config-email target="_blank" style="margin-left:-8px;"><span data-config-email></span></a>
+    </p>
+  </article>
+
+  <article class="">
+    <h3>Agenda</h3>
+    <ul class="build fade" style="font-size:150%;">
+      <li>Some Dojo basics</li>
+      <ul style="font-size:70%;">
+        <li>How Dojo's Built</li>
+        <li>Asynchronous Module Definition (AMD)</li>
+        <li>Connect, Deferred, and Hitch</li>
+        <li>Dojo Layers</li>
+        <li>Templates and Internationalization</li>
+      </ul>
+      <li>Integrating Dojo with Maven</li>
+      <li>Making TDD work with Dojo</li>
+      <li>Using Sonar in your Project</li>
+    </ul>
+  </article>
+
+  <article class="fill">
+    <h2 class="transparentBar">How Dojo's Built</h2>
+    <div class="">
+      <div>
+        <img src="images/house-construction.png">          
+      </div>
+    </div>
+  </article>
+  
+  <article class="">
+    <h3>What is Dojo?</h3>
+    <div class="build" style="margin-top: 100px;">
+      <div class="formula"><span class="redBox">Dojo</span></div>
+      <div class="formula">+</div>
+      <div class="formula"><span class="yellowBox">Dijit</span></div>
+      <div class="formula">+</div>
+      <div class="formula"><span class="greenBox">Dojox</span></div>
+      <div class="formula" style="border-bottom: 1px solid black;padding-bottom: 25px;"></div>
+      <div class="formula" style="margin-top:40px;"><strong>The Dojo Framework</strong></div>
+    </div>
+  </article>
+
+    <article class="">
+    <h3>Dojo</h3>
+    <ul style="font-size:120%; line-height: 52px">
+      <li>Core Framework Components</li>      
+      <li>Anything that begins dojo.*</li>
+      <li>Explicitly excluded is anything concerning rendering on to the page</li>
+    </ul>
+  </article>
+    
+  <article class="">
+    <h3>Dijit</h3>
+    <ul style="font-size:120%; line-height: 52px">
+      <li>Dojo's Widget Framework</li>      
+      <li>"Widget" doesn't just mean small components like buttons or text fields</li>
+      <li>The widget framework allows for composability: you can nest components inside of each other to build up a more powerful widget</li> 
+      <li>Anything that begins dijit.*</li> 
+    </ul>
+  </article>
+
+  <article class="">
+    <h3>Dojox</h3>
+    <ul style="font-size:120%; line-height: 52px">
+      <li>DojoX is an area for development of extensions to the Dojo toolkit. It is a repository for more stable and mature extensions and also acts as an incubator for experimental code, a testbed for additions to the main toolkit. Unlike Dojo and Dijit, DojoX is managed by subprojects, each of which has at least one module, a sponsor and a mission statement.</li>            
+    </ul>
+  </article>
+
+  <article class="middle">
+      <div style="padding-top: 150px">
+        <p style="font-weight: bold; padding-bottom: 20px">Asynchronous Module Definition</p>
+        <img src="images/requirejs.png">                
+    </div>
+    </div>
+  </article>
+
+ <article class="fill">
+    <img src="images/spaghetti.jpeg" width="900px">
+    <div class="build">
+      <div class="principle"><h4>Problem:</h4>How do you organize your javascript project so that you <strong>minimize</strong> code 
+        duplication and <strong>maximize</strong> reuse of successful patterns?</div>
+    </div>
+    <!--<div class="source"><a href="http://bit.ly/p7G6IA">http://bit.ly/p7G6IA</a></div>-->
+    <!-- screen shot from Chrome Web Store app -->
+  </article>
+
+  <article class="">
+    <h3>Answer?</h3>
+    <ul class="build fade" style="font-size:150%; line-height: 45px">
+      <li>With RequireJS!</li>
+      
+        <li>It's framework-independent so you can mix-and match modules</li>
+        <li>It can be easily optimized using an r.js compiler*</li>
+        <li>Provides a very flexible module definition syntax that allows you to easily express Java-style patterns
+          (and enhance them with some javascript additions)</li>
+      
+    </ul>
+  </article>
+
+   <article  class="fill">
+    <h3>AMD Example Class</h3>
+    <pre style="padding: 0px 10px 0px 0px; top: -10px;font-size:60%;">
+define("Printer", [
+    "dojo/_base/declare"
+    ], function(declare) {
+    return declare("Printer", null, {
+        print: function(input) {
+            dojo.create('div', {
+                innerHTML: input
+            }, dojo.body());
+        }
+    });
+});
+require([
+    "dojo/ready",
+    "Printer"
+    ], function(ready, Printer) {
+    ready(function() {
+        var printer = new Printer();
+        printer.print("hello1234");
+    });
+});​</pre> 
+  </article>
+
+  
+  <article class="fill">
+    <img src="images/mixins.jpeg">
+    <h2 class="transparentBar">How about some mixins?</h2>    
+  </article>
+
+  <article class="">
+    <h3>Mixins</h3>
+    <ul style="font-size:120%; line-height: 52px" class="build">
+      <li>Mixins allow you to break functionality into logical groupings </li>
+      <li>You can then "mixin" desired capabilities for your class</li>
+      <li>Can be a great tool for fighting cyclomatic complexity</li> 
+    </ul>
+  </article>
+
+    <article class="fill">
+    <img src="images/mixindiagram.png">
+  </article>
+
+  <article class="fill">
+   
+        <p>Operation.js:</p>
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:12px">
+define("Operation", ["dojo/_base/declare"],function(declare) {
+    return declare("Operation", null, {   
+        base: null
+    });
+});
+        </pre>
+
+        <p>AddMixin.js:</p>
+        <pre style="margin-top:5px;margin-bottom:10px;line-height: 15px;font-size:12px">
+define("AddMixin", ["dojo/_base/declare", "Operation"], function(declare,Operation) {
+    return declare("AddMixin", [Operation], {
+        add: function(x, y) {}
+    });
+});
+        </pre>
+        <p>CalculatorImpl.js:</p>
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:12px">
+define("CalculatorImpl", ["dojo/_base/declare", "AddMixin"],
+function(declare,AddMixin) {
+    return declare("JavascriptMixin", [Programmer, AddMixin], {
+        
+    });
+});
+        </pre>
+         <p>init.js:</p>
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:12px">
+require(["dojo/ready","CalculatorImpl"], function(ready, CalculatorImpl) {
+    ready(function() {
+        var calculator = new CalculatorImpl();
+        calculator.add(1,1);
+    });
+});​​​
+      </pre>
+     
+  </article>
+
+  
+
+  <article class="fill">
+    <img src="images/controllerDesign.png">
+    <div class="build">
+      <div class="principle"><h4>Keepin' it D.R.Y.</h4>AMD allows you to better adhere to the design approach "<strong>D</strong>on't <strong>R</strong>epeat <strong>Yourself </strong>." Use AMD to build up units of functionality and then mix them together to create your desired class.</div>
+    </div>
+    <!--<div class="source"><a href="http://bit.ly/p7G6IA">http://bit.ly/p7G6IA</a></div>-->
+    <!-- screen shot from Chrome Web Store app -->
+  </article>
+  <article class="fill">
+    <img src="images/wiz.jpeg">
+    <h2 class="transparentBar">Connect, Deferred, and Hitch,  Oh My!</h2>    
+  </article>
+     <article>
+    <h3>Connect</h3>
+       <ul style="font-size:150%;">
+      <li>A really cool function that allows you to chain methods together dynamically</li>
+      <li>It is preferred that you use connect to a more traditional pub/sub approach.</li>
+      <ul style="font-size:70%;">
+        <li>When you use quotes for method names, the methods will not be resolved until execution time.</li>
+        <li>That means you can wire objects together before they've finished initializing (even before the methods
+            you're wiring exist on the prototype chain)</li>
+      </ul>
+      </ul>
+      <div class="build">
+      <div class="overlayBox" style="margin-top: -100px;">
+              <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:18px">
+              var guy1 = {
+                  speak: function(){console.log("hello");}
+              };
+              var guy2 = {
+                  speak: function(){console.log("there");}
+              };
+
+              dojo.connect(guy1,'speak',guy2,'speak');
+              guy1.speak();
+              </pre>
+      </div>
+       <div class="overlayBox" style="margin-top: 150px;">
+              <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:18px">
+              > hello
+              > there
+              </pre>
+      </div>
+    </div>
+  </article>
+
+   <article class="">
+    <h3>Dojo Deferred</h3>
+    <div class="build" >
+       <ul style="font-size:120%;margin-top: 40px;">
+      <li>Dojo has the ability to manage communication between asynchronous callbacks</li>
+      <li>You can chain multiple callbacks together so that individual asynchronous steps happen in order</li>
+      <li>Deferreds also have success and error callbacks so you can write recovery handling into your application</li>
+      </ul>
+            <div class="overlayBox" style="margin-top: -100px;">
+
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 18px;font-size:22px">
+    var deferred = new dojo.Deferred();
+    setTimeout(function() {
+        echo("Timeout firing");
+        deferred.resolve({
+            called: true
+        });
+    }, 1000);
+
+    echo("Initial page content.");
+
+    deferred.then(function() {
+        echo("Deferred firing");
+    });
+      </pre>
+</div>      
+   <div class="overlayBox" style="margin-top: 250px;">
+              <pre style="margin-top:5px;margin-bottom:10px; line-height: 17px;font-size:18px">
+              > Initial page content
+              > Timeout firing
+              > Deferred firing
+              </pre>
+      </div>
+      
+    </div>
+       
+  </article>
+
+<article class="">
+    <h3>Dojo Hitch</h3>
+       <div class="build" style="padding-top: 40px;">
+       <ul  style="font-size:120%;">
+      <li>The mechanism by which dojo manages the scope that a function call executes within. </li>
+    </ul>  
+      
+      
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:18px">
+var simplePrinter = {
+  print: function(input) {
+    dojo.create('div', {
+      innerHTML: input
+    }, dojo.body());
+  }
+};
+
+dojo.forEach([1, 2, 3], dojo.hitch(fancyPrinter, function(item) {
+  this.print(item);
+}));
+        </pre>
+        <pre style="margin-top:15px;margin-bottom:10px; line-height: 15px;font-size:18px">
+          >1 2 3
+        </pre>
+
+      
+    </div>
+       
+  </article>
+
+    <article class="fill">
+    <img src="images/onion.jpg">
+    <h2 class="transparentBar">Dojo Layers</h2>    
+  </article>
+
+   <article class="">
+    <h3>Dojo Layers</h3>
+    <div class="build" style="margin-top: 30px">
+    <ul style="font-size:100%; line-height: 32px" class="build">
+      <li>Each dependency you bring in results in a HTTP call to the server.</li>
+      <li>Consequently having a lot of dependencies can significantly impact performance. </li>      
+      <li>Fortunately Dojo provides a mechanism through which you can aggregate dependencies into a single optimized file </li>
+      <li>If you want, you can get clever and write a resource loader for your widgets. You can load individual files when debugging
+      your widget and pull in the layer when debug mode is turned off.</li>
+    </ul>
+      <div class="overlayBox" style="margin-top: 0px;">
+              <pre style="margin-top:5px;margin-bottom:10px; line-height: 20px;font-size:18px">
+    dependencies ={
+      stripConsole: "normal",
+      selectorEngine: "acme",
+      layers:  [
+        {
+          name: "../synapse/widgetlayers/example.js",
+          dependencies: [
+            "dijit.layout.BorderContainer",
+            "dijit.layout.TabContainer",
+            "dijit.layout.ContentPane",
+            "dojox.data.FlickrRestStore",
+            "dojox.image.LightboxNano",
+            "synapse.common.applicationController.SynapseController",
+            'synapse.components.synapseControls.ControlBar',
+            'synapse.common.DataController'
+          ]
+        }
+      ]
+    }
+              </pre>
+      </div>
+    </div>
+  </article>
+  <article class="fill">
+    <img src="images/template.jpeg">
+    <h2 class="transparentBar">Templates</h2>    
+  </article>
+<article  class="">
+    <h3>Templates</h3>
+    <ul class="build">
+      <li>In Dojo you can define templates outside your javascript to express the look and feel of your application</li>
+      <li>Dojo templates just do string substitution and do not handle a lot of the advanced features you find in 
+        something like Ext's XTemplates (conditional processing, basic math function support, inline code execution against template variables, and built-in operators like iterators.</li>
+      <li>Using templates means that you don’t have to mix HTML markup inside JavaScript logic. It will make your code cleaner and allow easier modifications to look and feel.</li>
+      
+    </ul>
+    
+  </article>
+
+     <article  class="fill">
+    <h3>Dojo Template Example</h3>
+    <pre style="padding: 0px 10px 0px 0px; top: 100px;font-size:60%;">
+   
+    &lt;div data-dojo-type="example.SomeWidget"&gt;
+      &lt;p>This is arbitrary content!&lt;/p&gt;
+      &lt;div data-dojo-type="dijit.form.Button"&gt;${buttonLabel}&lt;/div&gt;
+      &lt;p>More arbitrary content!&lt;/p&gt;
+    &lt;/div&gt;
+
+</div>
+    </pre> 
+  </article>
+<article class="fill">
+    <img src="images/international.JPG" width="900px">
+    <h2 class="transparentBar">Internationalization</h2>    
+  </article>
+  <article  class="">
+    <h3>Internationalization</h3>
+    
+    <ul class="build" style="padding-top: 30px">
+      <li>Dojo supports internationalization through mixins</li>
+      <li>You can either mix your labels into your class (which makes it easier to use them in templates) 
+        or put them into some object for later use</li>
+    </ul>
+ 
+</div>
+    
+  </article>
+   <article class="fill">
+       <h3>Internationalization Example</h3>
+
+        <p>./nls/exampleWidget.js:</p>
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:18px">
+ define({ root:
+    ({
+      label1: "labelOne"
+    })
+  })  
+        </pre>
+
+        <p>./ExampleWidget.js:</p>
+        <pre style="margin-top:5px;margin-bottom:10px;line-height: 15px;font-size:16px">
+define("example/exampleWidget",
+    [
+        "dojo/_base/declare",
+        "dojo/i18n!./nls/myLocalization"
+    ],
+    function(declare, myLocalization){
+      return declare("example.exampleWidget", null,{
+        constructor: function(){
+          dojo.safeMixin(this, 
+            dojo.i18n.getLocalization("exampleWidget", "myLocalization"));
+
+            //go use this.label1 somewhere
+        }
+      } 
+    }
+  );
+        </pre>
+        
+     
+  </article>
+
+    <article class="fill">
+    <img src="images/puzzle.jpeg">
+    <h2 class="transparentBar">Integrating Dojo with Maven</h2>    
+  </article>
+
+<article  class="">
+    <h3>The Dojo Buildtool</h3>
+    <ul class="build">
+      <li>Dojo provides an implementation of the RequireJS compiler that is used to build the Dojo project</li>
+      <li>The actual dependency resolution and layer building occurs inside an instance of node.js they setup as part of the compile</li>
+      <li>There is currently no maven plugin for dojo, so you will need to use the exec-maven-plugin to invoke the dojo build chain</li>
+      <li>Furthermore, the compile process needs access to the whole Dojo project. Therefore whenever you want to compile you need to 
+        make sure the whole dojo library has been expanded to an accessible location</li>
+    </ul>
+    
+  </article>
+
+     <article class="fill">
+       <h3>Example POM</h3>
+
+        
+        <pre style="margin-top:5px;margin-bottom:10px; line-height: 15px;font-size:12px">
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+                &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;${exec.maven.plugin.version}&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;executable&gt;${java.home}/bin/java&lt;/executable&gt;
+                    &lt;workingDirectory&gt;
+                        ${dojo.source.local.unpacked.location}/util/buildscripts
+                    &lt;/workingDirectory&gt;
+                    &lt;arguments&gt;
+                        &lt;argument&gt;-Xms${dojo.build.xms}&lt;/argument&gt;
+                        &lt;argument&gt;-Xmx${dojo.build.xmx}&lt;/argument&gt;
+                        &lt;argument&gt;-classpath&lt;/argument&gt;
+                        &lt;argument&gt;${dojo.build.classpath}&lt;/argument&gt;
+                        &lt;argument&gt;org.mozilla.javascript.tools.shell.Main&lt;/argument&gt;
+                        &lt;argument&gt;./../../dojo/dojo.js&lt;/argument&gt;
+                        &lt;argument&gt;baseUrl=./../../dojo&lt;/argument&gt;
+                        &lt;argument&gt;load=build&lt;/argument&gt;
+                        &lt;argument&gt;copyTests=${dojo.build.copyTests}&lt;/argument&gt;
+                        &lt;argument&gt;profileFile=${dojo.build.profileFile}&lt;/argument&gt;
+                        &lt;argument&gt;action=${dojo.build.action}&lt;/argument&gt;
+                        &lt;argument&gt;version=${dojo.build.version}&lt;/argument&gt;
+                        &lt;argument&gt;releaseName=${dojo.build.release.name}&lt;/argument&gt;
+                        &lt;argument&gt;releaseDir=${dojo.build.release.location}&lt;/argument&gt;
+                        &lt;argument&gt;layerOptimize=${dojo.build.layerOptimize}&lt;/argument&gt;
+                        &lt;argument&gt;internStrings=${dojo.build.internStrings}&lt;/argument&gt;
+                        &lt;argument&gt;optimize=${dojo.build.optimize}&lt;/argument&gt;
+                        &lt;argument&gt;cssOptimize=${dojo.build.cssOptimize}&lt;/argument&gt;
+                    &lt;/arguments&gt;
+                &lt;/configuration&gt;
+                &lt;executions&gt;
+                        &lt;execution&gt;
+                        &lt;id&gt;dojo-custom-build&lt;/id&gt;
+                        &lt;phase&gt;compile&lt;/phase&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;exec&lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;  
+        </pre>        
+     
+  </article>
+
+  <article class="fill">
+    <img src="images/polyfill.png">
+    <h2 class="transparentBar">Making TDD work with Dojo</h2>    
+  </article>
+
+<article  class="">
+    <h3>Test Driven Development</h3>
+    <ul class="build">
+      <li>Test driven development is officially defined (on Wikipedia) as follows: "In test-driven development a developer creates automated unit tests that define code requirements then immediately writes the code itself."</li>
+      <li>In practice I have had trouble following this paradigm. I prefer to write and test incrementally.</li>
+      <li>I like to write one basic test case that covers the expected use case for my code</li>
+      <li>I'll then add tests as bugs / features are reported</li>
+    </ul>
+  </article>
+  <article  class="">
+    <h3>What makes TDD hard in Javascript?</h3>
+    <ul class="build">
+      <li>Testing algorithms and datastructures is actually pretty straight forward. </li>
+      <li>You start to run into trouble when you want to test UI elements, and that's not a problem that's unique to Javascript. </li>
+      <li>Most test harnesses for javascript run inside a headless browser (like Rhino).</li>
+      <li> Consequently you end up with a divided project: 
+        you have to arbitrarily separate your UI code from the rest of your project so you can test. </li>
+      
+    </ul>
+  </article>
+
+    <article class="segue">
+    <h2>So what to do...</h2>
+  </article>
+
+  <article class="middle">
+      <div style="padding-top: 100px">
+        <img src="images/jstestdriver.png">                
+        <p style="font-weight: bold; padding-bottom: 20px">The New Hotness: JSTestDriver</p>
+    </div>
+    </div>
+  </article>
+  <article  class="">
+    <h3>JSTestDriver</h3>
+    <ul class="build">
+      <li>JSTestDriver allows you to slave different browers (even from remote hosts like a mobile phone) to a locally run test server</li>
+      <li>You can then incrementally test the exact code that would be run in the browser</li>
+      <li>Has a major advantage over things like the Dojo Objective Harness or Selenium because of its speed.</li>
+      <li>Running a DOH test suite can take minutes because it recreates each 'click' you make with your mouse and plays them back</li>
+      <li>JSTestDriver does not record anything: you have to code everything (including mouse clicks) that you want to happen</li>
+    </ul>
+  </article>
+
+  <article class="">
+    <h1><center>Basically you can write this:</center></h1>
+    <pre style="margin-top:40px; line-height: 15px;font-size:12px">
+    queue.call('Load the component on the page',function(callbacks){
+        buttonGroup = new synapse.components.buttonGroup.ButtonGroup();
+        button1 = new synapse.components.buttonGroup.SelectableButton({
+            iconClass: "synapseSearchIcon",
+            showLabel: false,
+            buttonGroup: buttonGroup
+        }).placeAt(dojo.byId('myDiv'));
+        button2 = new synapse.components.buttonGroup.SelectableButton({
+            iconClass: "synapseSearchIcon",
+            showLabel: false,
+            buttonGroup: buttonGroup
+        }).placeAt(dojo.byId('myDiv'));
+
+    });
+
+    queue.call('Execute a test 1',function(callbacks){
+        button1._onClick({
+            preventDefault:function(){},
+            stopPropagation:function(){}
+        });
+        assertTrue(button1.checked);
+
+        button2._onClick({
+            preventDefault:function(){},
+            stopPropagation:function(){}
+        });
+        assertTrue(button2.checked);
+        assertFalse(button1.checked);
+
+    });
+        </pre>        
+  </article>
+    <article class="middle">
+      <h1>And get results like this:</h1>
+      <div style="padding-top: 80px">
+        <img src="images/testresults.png">
+    </div>
+    </div>
+  </article>
+
+  <article class="segue">
+    <h2>So testing is pretty much solved, right?</h2>
+  </article>
+
+  <article class="fill">
+    <img src="images/liar.jpg">
+  </article>
+
+  <article  class="">
+    <h3>The Fine Print</h3>
+    <ul class="build" style="font-size:80%;">
+      <li>Test suite needs explicit declarations for anything that is asynchronous, which can mean reaching into your library code to 
+        wrap things correctly (like deferred)</li>
+      <li>Since there is no HTML at all, you have to inject you library onto the page. For things like Google Closure, this can mean needing
+        to rewrite their supplied loader</li>
+      <li>Sometimes your test suite can just 'break' and you need restart your IDE, server, browser, etc until it starts working again</li>
+      <li>Anytime you change code, you need to manually flush your browser cache. If you don't you run the risk of testing cached code vs. the changes you've made.</li>
+      <li>Since many libraries are dynamically loaded, you need to proxy your javascript through the test framework to avoid XSS errors.</li>
+    </ul>
+  </article>
+
+  <article class="fill">
+    <img src="images/sonar.png" width="900">
+  </article>
+
+<article class="segue">
+    <h2>Basically all I have to say about Sonar is that you should be using it...</h2>
+  </article>
+
+
+     <article  class="fill">
+    <h1><center>It's Trivial To Add To Your Project<center></h1>
+    <pre style="padding: 0px 10px 0px 0px; top: 60px;font-size:40%;">
+   
+    &lt;properties&gt;
+        &lt;sonar.language&gt;js&lt;/sonar.language&gt;
+        &lt;sonar.dynamicAnalysis&gt;false&lt;/sonar.dynamicAnalysis&gt;
+        &lt;sonar.javascript.lslint.devel&gt;true&lt;/sonar.javascript.lslint.devel&gt;
+        &lt;sonar.javascript.lslint.browser&gt;true&lt;/sonar.javascript.lslint.browser&gt;
+        &lt;sonar.host.url&gt;http://zeus.local:8081/sonar/&lt;/sonar.host.url&gt;
+        &lt;sonar.jdbc.driver&gt;com.mysql.jdbc.Driver&lt;/sonar.jdbc.driver&gt;
+        &lt;sonar.jdbc.username&gt;sonar&lt;/sonar.jdbc.username&gt;
+        &lt;sonar.jdbc.password&gt;sonar&lt;/sonar.jdbc.password&gt;
+        &lt;sonar.jdbc.url&gt;jdbc:mysql://zeus.local:3306/sonar?useUnicode=true&amp;characterEncoding=utf8&lt;/sonar.jdbc.url&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;wro4j.version&gt;1.4.1&lt;/wro4j.version&gt;
+    &lt;/properties&gt;
+
+</div>
+    </pre> 
+  </article>
+
+    <article class="middle">
+      <div style="padding-top: 100px">
+        <img src="images/timemachine.png">                
+        <p style="font-weight: bold; padding-bottom: 20px">Can give you an overview of your project's health</p>
+    </div>
+    </div>
+  </article>
+
+   <article class="middle">
+      <div style="padding-top: 10px">
+        <img height="400px" src="images/hotspots.png">                
+        <p style="font-weight: bold; padding-bottom: 20px">And can help prioritize maintenance efforts</p>
+    </div>
+    </div>
+  </article>
+
+</section>
+
+<script src="js/config.js"></script>
+<script src="js/hide-slides.js"></script>
+<script src='js/slides.js'></script>
+<script src="helpers/dnd-lib.js" defer></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22014378-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+ 
+<!--[if IE]>
+<script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+<script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+
+<script type="text/javascript" src="js/timer.js"></script>
+<script type="text/javascript">
+  var t = PresentationTimer();
+  t.start()
+</script>
+</body>
+</html>
